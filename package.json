@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-web-scrapping",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^3.21.2",
+    "jade": "*"
+  },
+  "description": "practice with web scrapping libs",
+  "main": "app.js",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
