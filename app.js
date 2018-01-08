@@ -33,6 +33,8 @@ app.get('/', function(req, res){
 			let data = $(this);
 
 			info = data.children().text();
+			info = info.replace(/\s\s+/g, ' ');
+			
 			news.info = info;
 		})
 
