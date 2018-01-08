@@ -1,36 +1,48 @@
+'use strict';
 
-/**
- * Module dependencies.
- */
+let express = require('express');
+let fs = require('fs');
+let request = require('request');
+let cheerio = require('cheerio');
+let app     = express();
+let jade = require('jade');
 
-var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var http = require('http');
-var path = require('path');
 
-var app = express();
+app.get('/', function(req, res){
+	let url = 'http://www.bbc.com/travel/story/20180108-the-truth-about-italys-white-truffles/'
 
-// all environments
-app.set('port', process.env.PORT || 3000);
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+	let news = {};
 
-// development only
-if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
-}
+	request(url, function(err, response, html) {
+		let $ = cheerio.load(html);
+		let header, info;
 
-app.get('/', routes.index);
-app.get('/users', user.list);
+		// get header
+		$('.byline').filter(function() {
+			let data = $(this);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+
+			header = data.children().last().text();
+			let fixed = header.replace(/\s\s+/g, ' '); // remove any whitespaces('\n')
+
+			news.header = fixed;
+		})
+
+		// get body
+		$('.body-content').filter(function() {
+			let data = $(this);
+
+			info = data.children().text();
+			news.info = info;
+		})
+
+		res.json(news);
+	})
+
+})
+
+app.listen('8080')
+
+console.log('Up this shit on 8080');
+
+exports = module.exports = app;
