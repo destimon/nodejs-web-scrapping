@@ -1,8 +1,7 @@
+"use strict"
 
-/*
- * GET home page.
- */
+let controller = require('./controller.js');
 
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
-};
+module.exports = function(app) {
+	controller(app);
+}

@@ -2,49 +2,20 @@
 
 let express = require('express');
 let fs = require('fs');
-let request = require('request');
-let cheerio = require('cheerio');
 let app     = express();
 let jade = require('jade');
 
+let server = require('http').createServer(app);  
+const port = process.env.PORT || 8080;
 
-app.get('/', function(req, res){
-	let url = 'http://www.bbc.com/travel/story/20180108-the-truth-about-italys-white-truffles/'
-
-	let news = {};
-
-	request(url, function(err, response, html) {
-		let $ = cheerio.load(html);
-		let header, info;
-
-		// get header
-		$('.byline').filter(function() {
-			let data = $(this);
+app.use(express.static(__dirname + '/public'));
 
 
-			header = data.children().last().text();
-			let fixed = header.replace(/\s\s+/g, ' '); // remove any whitespaces('\n')
+require('./routes')(app);
+	
+server.listen(port, () => {
+	console.log('Up this shit on ' + port);
+});
 
-			news.header = fixed;
-		})
-
-		// get body
-		$('.body-content').filter(function() {
-			let data = $(this);
-
-			info = data.children().text();
-			info = info.replace(/\s\s+/g, ' ');
-			
-			news.info = info;
-		})
-
-		res.json(news);
-	})
-
-})
-
-app.listen('8080')
-
-console.log('Up this shit on 8080');
 
 exports = module.exports = app;
